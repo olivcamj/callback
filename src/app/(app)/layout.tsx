@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { SiteHeader } from "@/components/site-header";
+import { getCurrentUser } from "@/lib/user";
 
 // Layouts don't always re-render on navigation, so this check is not enough on
 // its own each page/route handler/server action under (app) must also call
@@ -9,7 +9,8 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await auth.protect();
+  // Also creates the database row for a user's first authenticated visit.
+  await getCurrentUser();
   return (
     <>
       <SiteHeader />

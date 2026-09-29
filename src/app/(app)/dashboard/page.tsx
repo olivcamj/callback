@@ -1,12 +1,12 @@
-import { auth } from "@clerk/nextjs/server";
+import { getCurrentUser } from "@/lib/user";
 
 export default async function DashboardPage() {
-  const { userId } = await auth.protect();
+  const user = await getCurrentUser();
 
   return (
     <main className="flex flex-1 flex-col gap-2 p-6">
       <h1 className="text-2xl font-semibold">Dashboard</h1>
-      <p className="text-muted-foreground">Signed in as {userId}</p>
+      <p className="text-muted-foreground">Signed in as {user.email}</p>
     </main>
   );
 }
