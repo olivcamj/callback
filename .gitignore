@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Vitest reports and artifacts
+.vitest/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
