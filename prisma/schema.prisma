@@ -8,11 +8,50 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  clerkId   String   @unique
-  email     String   @unique
-  name      String?
-  imageUrl  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String          @id @default(cuid())
+  clerkId        String          @unique
+  email          String          @unique
+  name           String?
+  imageUrl       String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  interviewPlans InterviewPlan[]
+}
+
+// Mirrors questionTypeSchema in src/lib/ai/schemas/interview-plan.ts.
+enum QuestionType {
+  behavioral
+  technical
+  role
+}
+
+model InterviewPlan {
+  id        String     @id @default(cuid())
+  userId    String
+  user      User       @relation(fields: [userId], onDelete: Cascade, references: [id])
+  // The job description as the user pasted it.
+  jdText    String
+  // The validated model output minus questions: role, level, mustHaveSkills,
+  // niceToHave. Questions are stored as rows so answers can reference them.
+  parsed    Json
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  questions Question[]
+
+  @@index([userId, createdAt])
+}
+
+model Question {
+  id         String        @id @default(cuid())
+  planId     String
+  plan       InterviewPlan @relation(fields: [planId], onDelete: Cascade, references: [id])
+  // Zero-based position in the plan, in the order the model returned them.
+  position   Int
+  type       QuestionType
+  prompt     String
+  competency String
+  whyAsked   String
+  createdAt  DateTime      @default(now())
+
+  @@unique([planId, position])
 }
