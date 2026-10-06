@@ -54,7 +54,8 @@ I record significant technical decisions as **ADRs (Architecture Decision Record
 
 | ADR | Decision |
 | --- | --- |
-| [0001](docs/adr/0001-stack.md) | Next.js App Router + Prisma + Clerk + Gemini via the Vercel AI SDK |
+| [001](docs/adr/001-stack.md) | Next.js App Router + Prisma + Clerk + Gemini via the Vercel AI SDK |
+| [002](docs/adr/002-structured-llm-output.md) | Structured LLM output validated with Zod; retry once instead of repairing bad output |
 
 
 ## Privacy
