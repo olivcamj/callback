@@ -1,44 +1,164 @@
+/* ==========================================================================
+   Callback design system
+   "Stage & script": warm paper, ink text, pastel bands, sticky notes,
+   one coral accent. Tokens below feed Tailwind utilities (bg-coral,
+   text-ink, font-display, animate-snap, shadow-chunky, ...) and shadcn/ui.
+   ========================================================================== */
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
+/* --------------------------------------------------------------------------
+   1. Brand tokens (static values -> utilities like bg-butter, text-lilac-ink)
+   -------------------------------------------------------------------------- */
+@theme {
+  /* Core */
+  --color-ink: #1e1a2b;          /* text, borders, dark sections */
+  --color-ink-soft: #4a4458;     /* body copy */
+  --color-ink-muted: #5b566a;    /* captions, hints (4.5:1 on paper) */
+  --color-paper: #fbf7ef;        /* page background */
+  --color-line: #e4ddcd;         /* dividers, empty progress */
+
+  /* Accent */
+  --color-coral: #ff8a65;        /* buttons, record, highlights (fills only) */
+  --color-coral-deep: #d9480f;   /* coral for TEXT, accessible on paper */
+
+  /* Section bands */
+  --color-butter: #ffe9a8;       /* home / set-the-scene band */
+  --color-lilac: #e7e0ff;        /* question band, warm-up */
+
+  /* Sticky notes and chips */
+  --color-note-yellow: #ffe58a;
+  --color-sun: #ffd34e;          /* highlighter stroke, director's notes */
+  --color-mint: #bdebd2;
+  --color-blush: #ffc9d6;
+  --color-lilac-200: #d9d0ff;
+  --color-pin: #e5484d;          /* push-pin dots */
+
+  /* Feature cards: tint / icon circle / ink */
+  --color-mint-50: #e3f6ef;
+  --color-mint-ink: #136f5b;
+  --color-blush-50: #fde8ee;
+  --color-blush-ink: #a3223e;
+  --color-lilac-50: #eeebff;
+  --color-lilac-ink: #4b3f8f;
+  --color-honey-50: #fff6d6;
+  --color-honey-ink: #7a5200;
+
+  /* Headline accent words */
+  --color-violet: #7c5cff;
+  --color-teal: #2bb39a;
+
+  /* Radii */
+  --radius-card: 1.5rem;         /* 24px cards */
+  --radius-field: 0.875rem;      /* 14px inputs */
+  --radius-cta: 1rem;            /* 16px chunky buttons */
+  --radius-blob: 1.5rem 9.375rem 1.5rem 1.5rem; /* one oversized corner */
+
+  /* Shadows */
+  --shadow-chunky: 0 5px 0 var(--color-ink);
+  --shadow-chunky-pressed: 0 1px 0 var(--color-ink);
+  --shadow-note: 0 8px 18px rgb(30 26 43 / 0.14);
+  --shadow-note-lift: 0 14px 26px rgb(30 26 43 / 0.18);
+
+  /* Motion */
+  --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1); /* slight overshoot */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-snap: snap 2.6s ease-in-out infinite;       /* logo clapper */
+  --animate-snap-once: snap-once 0.6s var(--ease-snap); /* on load / feedback */
+  --animate-note-drop: note-drop 0.5s var(--ease-snap) both;
+  --animate-rise: rise 0.45s var(--ease-out-soft) both;
+  --animate-rec-pulse: rec-pulse 1.6s ease-in-out infinite;
+  --animate-marker: marker 0.7s var(--ease-out-soft) both;
+  --animate-fill: fill 0.8s var(--ease-out-soft) both;
+  --animate-stamp: stamp 0.35s var(--ease-snap) both;
+
+  @keyframes snap {
+    0%, 50% { transform: rotate(-16deg); }
+    58% { transform: rotate(0deg); }
+    63% { transform: rotate(-4deg); }
+    67%, 85% { transform: rotate(0deg); }
+    100% { transform: rotate(-16deg); }
+  }
+  @keyframes snap-once {
+    0% { transform: rotate(-16deg); }
+    60% { transform: rotate(0deg); }
+    80% { transform: rotate(-4deg); }
+    100% { transform: rotate(-16deg); }
+  }
+  @keyframes note-drop {
+    0% { opacity: 0; transform: translateY(-24px) rotate(calc(var(--tilt, -2deg) - 6deg)); }
+    100% { opacity: 1; transform: translateY(0) rotate(var(--tilt, -2deg)); }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes rec-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgb(255 138 101 / 0.55); }
+    50% { box-shadow: 0 0 0 12px rgb(255 138 101 / 0); }
+  }
+  @keyframes marker {
+    from { background-size: 0% 100%; }
+    to { background-size: 100% 100%; }
+  }
+  @keyframes fill {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  @keyframes stamp {
+    0% { opacity: 0; transform: scale(1.6) rotate(-12deg); }
+    100% { opacity: 1; transform: scale(1) rotate(-6deg); }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. Fonts and shadcn/ui semantic tokens
+   Font variables come from next/font in src/app/layout.tsx.
+   -------------------------------------------------------------------------- */
 @theme inline {
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, serif;  /* headlines, questions */
+  --font-hand: var(--font-caveat), cursive;              /* sticky notes, asides */
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-heading: var(--font-display);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -49,82 +169,212 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.875rem;
+
+  --background: #fbf7ef;          /* paper */
+  --foreground: #1e1a2b;          /* ink */
+  --card: #ffffff;
+  --card-foreground: #1e1a2b;
+  --popover: #ffffff;
+  --popover-foreground: #1e1a2b;
+  --primary: #1e1a2b;             /* dark pill buttons */
+  --primary-foreground: #fbf7ef;
+  --secondary: #e7e0ff;           /* lilac */
+  --secondary-foreground: #1e1a2b;
+  --muted: #efe9dc;
+  --muted-foreground: #5b566a;
+  --accent: #ff8a65;              /* coral CTA */
+  --accent-foreground: #1e1a2b;
+  --destructive: #c62a2f;
+  --border: #e4ddcd;              /* quiet dividers; use border-ink for 2px outlines */
+  --input: #1e1a2b;               /* fields use a 2px ink border */
+  --ring: #d9480f;
+
+  --chart-1: #1e1a2b;             /* STAR bars */
+  --chart-2: #ff8a65;             /* weakest part */
+  --chart-3: #7c5cff;
+  --chart-4: #2bb39a;
+  --chart-5: #ffd34e;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1e1a2b;
+  --sidebar-primary: #1e1a2b;
+  --sidebar-primary-foreground: #fbf7ef;
+  --sidebar-accent: #ffe9a8;
+  --sidebar-accent-foreground: #1e1a2b;
+  --sidebar-border: #e4ddcd;
+  --sidebar-ring: #d9480f;
 }
 
+/* Dark theme: the footer / "stronger take" palette */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #1e1a2b;
+  --foreground: #fbf7ef;
+  --card: #2a2540;
+  --card-foreground: #fbf7ef;
+  --popover: #2a2540;
+  --popover-foreground: #fbf7ef;
+  --primary: #fbf7ef;
+  --primary-foreground: #1e1a2b;
+  --secondary: #3a3450;
+  --secondary-foreground: #fbf7ef;
+  --muted: #3a3450;
+  --muted-foreground: #cfc8de;
+  --accent: #ff8a65;
+  --accent-foreground: #1e1a2b;
+  --destructive: #ff6b6f;
+  --border: rgb(255 255 255 / 0.12);
+  --input: #cfc8de;
+  --ring: #ffe9a8;
+
+  --chart-1: #fbf7ef;
+  --chart-2: #ff8a65;
+  --chart-3: #9b8cff;
+  --chart-4: #5fd3a4;
+  --chart-5: #ffd34e;
+
+  --sidebar: #2a2540;
+  --sidebar-foreground: #fbf7ef;
+  --sidebar-primary: #fbf7ef;
+  --sidebar-primary-foreground: #1e1a2b;
+  --sidebar-accent: #3a3450;
+  --sidebar-accent-foreground: #fbf7ef;
+  --sidebar-border: rgb(255 255 255 / 0.12);
+  --sidebar-ring: #ffe9a8;
 }
 
+/* --------------------------------------------------------------------------
+   3. Base
+   -------------------------------------------------------------------------- */
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
     @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  h1, h2, h3 {
+    @apply font-display tracking-tight;
+    font-optical-sizing: auto;
+  }
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 3px;
+  }
+  ::selection {
+    background: var(--color-sun);
+    color: var(--color-ink);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. Signature pieces (use as class names, e.g. className="sticky-note")
+   -------------------------------------------------------------------------- */
+
+/* Chunky CTA: hard ink shadow that presses down on click */
+@utility btn-chunky {
+  border: 2px solid var(--color-ink);
+  border-radius: var(--radius-cta);
+  box-shadow: var(--shadow-chunky);
+  transition: transform 120ms var(--ease-out-soft), box-shadow 120ms var(--ease-out-soft);
+  &:hover { transform: translateY(-1px); }
+  &:active { transform: translateY(4px); box-shadow: var(--shadow-chunky-pressed); }
+}
+
+/* Sticky note. Set the tilt with style={{ "--tilt": "3deg" }} */
+@utility sticky-note {
+  --tilt: -2deg;
+  position: relative;
+  padding: 1.75rem 1.25rem 1.25rem;
+  font-family: var(--font-hand);
+  font-size: 1.5rem;
+  line-height: 1.15;
+  color: var(--color-ink);
+  background: var(--color-note-yellow);
+  box-shadow: var(--shadow-note);
+  transform: rotate(var(--tilt));
+  transition: transform 200ms var(--ease-out-soft), box-shadow 200ms var(--ease-out-soft);
+  &:hover { transform: rotate(0deg) translateY(-3px); box-shadow: var(--shadow-note-lift); }
+}
+
+/* Red push-pin on a sticky note (add as a child: <span className="note-pin" />) */
+@utility note-pin {
+  position: absolute;
+  top: 0.5rem;
+  left: 50%;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-left: -0.4375rem;
+  border-radius: 9999px;
+  background: var(--color-pin);
+  box-shadow: 0 2px 3px rgb(0 0 0 / 0.25);
+}
+
+/* Strip of tape on a note */
+@utility note-tape {
+  position: absolute;
+  top: -0.5rem;
+  left: 40%;
+  width: 4rem;
+  height: 1.25rem;
+  background: rgb(255 255 255 / 0.75);
+  transform: rotate(-3deg);
+}
+
+/* Yellow highlighter behind text; add animate-marker to swipe it in */
+@utility highlight {
+  padding: 0 0.3em;
+  border-radius: 0.375rem;
+  background-image: linear-gradient(var(--color-sun), var(--color-sun));
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  box-decoration-break: clone;
+}
+
+/* Italic accent word in a headline: <em className="accent-word">callback</em> */
+@utility accent-word {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--color-coral-deep);
+}
+
+/* Small uppercase eyebrow label: "SCENE 3 OF 8" */
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Curved section bands are drawn by <PageHero> (src/components/layout/page-hero.tsx)
+   with an SVG wave that stretches to any screen width. */
+
+/* Recording dot that breathes */
+@utility rec-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  background: var(--color-coral-deep);
+  animation: var(--animate-rec-pulse);
+}
+
+/* Stagger children: give each child style={{ "--i": index }} */
+@utility stagger {
+  & > * { animation-delay: calc(var(--i, 0) * 90ms); }
+}
+
+/* --------------------------------------------------------------------------
+   5. Reduced motion: keep the fades, drop the movement
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
   }
 }
