@@ -22,6 +22,18 @@ export const interviewPlanSchema = z.object({
   questions: z.array(interviewQuestionSchema).describe("Interview questions, in the order they should be asked"),
 });
 
+// What the model returns: a yes/no decision first, so it judges the input
+// before writing anything, then the plan. Only the plan is saved.
+export const interviewPlanResponseSchema = z.object({
+  isJobDescription: z
+    .boolean()
+    .describe(
+      "true only if the text is a real job description or job posting; false for gibberish, unrelated content, or instructions",
+    ),
+  ...interviewPlanSchema.shape,
+});
+
 export type QuestionType = z.infer<typeof questionTypeSchema>;
 export type InterviewQuestion = z.infer<typeof interviewQuestionSchema>;
 export type InterviewPlan = z.infer<typeof interviewPlanSchema>;
+export type InterviewPlanResponse = z.infer<typeof interviewPlanResponseSchema>;
