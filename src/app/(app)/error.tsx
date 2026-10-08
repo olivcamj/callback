@@ -18,7 +18,7 @@ export default function AppError({
   }, [error]);
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start gap-3 p-6">
+    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start gap-3 p-6">
       <h1 className="text-2xl font-semibold">Something went wrong</h1>
       <p className="text-muted-foreground">
         We hit an unexpected problem loading this page. Trying again usually
@@ -30,6 +30,6 @@ export default function AppError({
         </p>
       )}
       <Button onClick={() => retry()}>Try again</Button>
-    </main>
+    </div>
   );
 }
