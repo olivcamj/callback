@@ -1,19 +1,28 @@
 import { getCurrentUser } from "@/lib/user";
 import { NewPlanForm } from "./new-plan-form";
+import { PageHero } from "@/components/layout/page-hero";
+import { PageBody } from "@/components/layout/page-body";
 
 export default async function NewPlanPage() {
   await getCurrentUser();
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 p-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold">New interview plan</h1>
-        <p className="text-muted-foreground">
-          Paste a job description and we&apos;ll draft the questions you&apos;re
-          likely to be asked.
-        </p>
-      </div>
-      <NewPlanForm />
-    </main>
+    <div>
+      {/* <div className="flex flex-col gap-1"> */}
+      
+      <PageHero
+        title={
+          <>
+            Set the <em className="accent-word">scene.</em>
+          </>
+        }
+        eyebrow="New interview plan"
+        tone="butter"
+        description="Tell us about the role. We'll write the questions this interviewer is most likely to ask."
+      />
+      <PageBody>
+        <NewPlanForm />
+      </PageBody>
+    </div>
   );
 }
