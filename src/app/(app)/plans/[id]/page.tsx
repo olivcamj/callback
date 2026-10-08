@@ -28,7 +28,7 @@ export default async function PlanPage(props: PageProps<"/plans/[id]">) {
   const summary = planSummarySchema.parse(plan.parsed);
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 p-6">
+    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 p-6">
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-2xl font-semibold">{summary.role}</h1>
@@ -82,7 +82,7 @@ export default async function PlanPage(props: PageProps<"/plans/[id]">) {
           {plan.jdText}
         </p>
       </details>
-    </main>
+    </div>
   );
 }
 

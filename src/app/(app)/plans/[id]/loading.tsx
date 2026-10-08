@@ -1,7 +1,7 @@
 // Mirrors the layout of the plan page so content doesn't jump when it loads.
 export default function PlanLoading() {
   return (
-    <main
+    <div
       aria-busy
       aria-label="Loading plan"
       className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 p-6"
@@ -28,6 +28,6 @@ export default function PlanLoading() {
           <div key={card} className="h-28 animate-pulse rounded-xl bg-muted" />
         ))}
       </div>
-    </main>
+    </div>
   );
 }
