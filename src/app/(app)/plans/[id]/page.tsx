@@ -10,6 +10,7 @@ import {
 import { db } from "@/lib/db";
 import { interviewPlanSchema } from "@/lib/ai/schemas/interview-plan";
 import { getCurrentUser } from "@/lib/user";
+import { StartSessionButton } from "./start-session-button";
 
 // `parsed` holds the plan minus its questions, which live in their own table.
 const planSummarySchema = interviewPlanSchema.omit({ questions: true });
@@ -40,6 +41,9 @@ export default async function PlanPage(props: PageProps<"/plans/[id]">) {
           Created{" "}
           {plan.createdAt.toLocaleDateString("en-US", { dateStyle: "medium" })}
         </p>
+        <div className="mt-2">
+          <StartSessionButton planId={plan.id} />
+        </div>
       </div>
 
       <section className="grid gap-6 sm:grid-cols-2">
