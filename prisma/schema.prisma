@@ -16,6 +16,7 @@ model User {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   interviewPlans InterviewPlan[]
+  sessions       Session[]
 }
 
 // Mirrors questionTypeSchema in src/lib/ai/schemas/interview-plan.ts.
@@ -37,6 +38,7 @@ model InterviewPlan {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   questions Question[]
+  sessions  Session[]
 
   @@index([userId, createdAt])
 }
@@ -52,6 +54,39 @@ model Question {
   competency String
   whyAsked   String
   createdAt  DateTime      @default(now())
+  answers    Answer[]
 
   @@unique([planId, position])
+}
+
+// One run through a plan's questions. userId duplicates plan.userId so
+// ownership checks and per-user history don't need to join through the plan.
+model Session {
+  id        String        @id @default(cuid())
+  userId    String
+  user      User          @relation(fields: [userId], onDelete: Cascade, references: [id])
+  planId    String
+  plan      InterviewPlan @relation(fields: [planId], onDelete: Cascade, references: [id])
+  startedAt DateTime      @default(now())
+  // Null while the session is in progress.
+  endedAt   DateTime?
+  answers   Answer[]
+
+  @@index([userId, startedAt])
+  @@index([planId, startedAt])
+}
+
+model Answer {
+  id          String   @id @default(cuid())
+  sessionId   String
+  session     Session  @relation(fields: [sessionId], onDelete: Cascade, references: [id])
+  questionId  String
+  question    Question @relation(fields: [questionId], onDelete: Cascade, references: [id])
+  transcript  String
+  durationSec Int
+  // Validated model feedback. Null until the answer has been scored.
+  scores      Json?
+  createdAt   DateTime @default(now())
+
+  @@unique([sessionId, questionId])
 }
